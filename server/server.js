@@ -5,6 +5,7 @@ import connectDB from "./config/db.js";
 import { notFound,errorHandler } from "./middleware/errorHandler.js";
 import authRoutes from "./routes/authRoutes.js";
 import serviceRoutes from "./routes/serviceRoutes.js";
+import slotRoutes from "./routes/slotRoutes.js";
 
 const app=express();
 
@@ -16,6 +17,7 @@ app.use(express.json());
 //Health Check route   
 app.use("/api/auth",authRoutes); 
 app.use("/api/services",serviceRoutes);
+app.use("/api/slots",slotRoutes);
 app.get("/api/health",(req,res)=>{
     res.status(200).json({status:"ok"});
 

@@ -10,6 +10,9 @@ export const errorHandler = (err,req,res,next)=>{
 if(err.type==="entity.parse.failed"){
     return res.status(400).json({message:"Invalid JSON in request body"});
 }
+if(err.code===11000){
+    return res.status(409).json({message:"This already exists"});
+}
     const statusCode=res.statusCode === 200 ? 500 :res.statusCode;
 
     res.status(statusCode).json({
