@@ -8,6 +8,7 @@ import Services from "./pages/Services.jsx";
 import MyAppointments from "./pages/MyAppointments.jsx";
 import Admin from "./pages/Admin.jsx";
 import NotFound from "./pages/NotFound.jsx";
+import Book from "./pages/Book.jsx";
 
 export default function App(){
   return(
@@ -27,6 +28,10 @@ export default function App(){
             path="/admin"
             element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>}
             />
+            <Route 
+             path="/book/:serviceId"
+             element={<ProtectedRoute><Book /></ProtectedRoute>}
+             />
             <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
