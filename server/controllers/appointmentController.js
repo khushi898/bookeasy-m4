@@ -102,3 +102,65 @@ export const cancelAppointment=async (req ,res)=>{
     await Slot.findByIdAndUpdate(appointment.slot, {isBooked:false});
     res.status(200).json({message:"Appointment cancelled",appointment});
 };
+
+    //get /api/appointments
+    export const getAllAppointments=async(req ,res)=>{
+        const page=Math.max(parseInt(req.query.page) || 1,1);
+        const limit=Math.min(Math.max(parseInt(req.query.limit)||10,1),50);
+        const {status,date} =req.query;
+        const filter={};
+        if(status){
+            const allowed=["booked", "cancelled", "completed"];
+            if(!allowed.includes(status)){
+                res.status(400);
+                throw new Error("Status must be booked, cancelled or completed");
+            }
+            filter.status=status;
+        }
+        //date is stored on the slot, find the slot first  
+        if(date){
+            const slots=await Slot.find({date}).select("_id");
+            filter.slot={$in:slots.map((s)=>s._id)};
+        }
+
+        const total=await Appointment.countDocuments(filter);
+        const appointments=await Appointment.find(filter)
+        .populate("user","name email")
+        .populate("service", "name duration price")
+        .populate("slot", "date startTime endTime")
+        .sort({createdAt:-1})
+        .skip((page-1)*limit)
+        .limit(limit);
+
+        res.status(200).json({
+            appointments,
+            page,
+            totalPages: Math.ceil(total / limit),
+            total,
+        });
+    
+
+    };
+
+    //patch /api/appointments/:id/complete   
+    export const completeAppointment=async(req ,res)=>{
+        if(!mongoose.isValidObjectId(req.params.id)){
+            res.status(400);
+            throw new Error("Invalid appointment id");
+        }
+        const appointment=await Appointment.findById(req.params.id);
+        if(!appointment){
+            res.status(404);
+            throw new Error("Appointment not found!");
+        }
+        if(appointment.status !=="booked"){
+            res.status(400);
+            throw new Error(`Only booked appointments can be completed (this one is ${appointment.status})`);
+
+        }
+
+        appointment.status="completed";
+        await appointment.save();
+
+        res.status(200).json(appointment);
+    };
