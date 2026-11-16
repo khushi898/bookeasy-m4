@@ -6,6 +6,7 @@ import { notFound,errorHandler } from "./middleware/errorHandler.js";
 import authRoutes from "./routes/authRoutes.js";
 import serviceRoutes from "./routes/serviceRoutes.js";
 import slotRoutes from "./routes/slotRoutes.js";
+import appointmentRoutes from "./routes/appointmentRoutes.js";
 
 const app=express();
 
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use("/api/auth",authRoutes); 
 app.use("/api/services",serviceRoutes);
 app.use("/api/slots",slotRoutes);
+app.use("/api/appointments",appointmentRoutes);
 app.get("/api/health",(req,res)=>{
     res.status(200).json({status:"ok"});
 
