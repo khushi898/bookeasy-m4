@@ -22,7 +22,7 @@ try{
     decoded=jwt.verify(token, process.env.JWT_SECRET);
 
 }catch(error){
-    console.log("JWT error:",error.message);
+   
     res.status(401);
     throw new Error("Not authorized, invalid token");
 
